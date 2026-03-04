@@ -4,19 +4,29 @@
  * Migrado desde Make (Integromat) blueprint: facturas_Drive
  *
  * Flujo:
- *   1. Busca emails nuevos con label "💰 facturas" en Gmail
- *   2. Descarga los adjuntos de cada email
- *   3. Sube cada adjunto a Google Drive
- *   4. Comparte el archivo en Drive (anyone/reader)
- *   5. Crea un registro en Airtable con el link del archivo
- *   6. Añade label "💰 facturas/drive" al email procesado
+ *   1. Refresca tokens OAuth2 de Google (Gmail + Drive)
+ *   2. Busca emails nuevos con label "💰 facturas" en Gmail
+ *   3. Descarga los adjuntos de cada email
+ *   4. Sube cada adjunto a Google Drive
+ *   5. Comparte el archivo en Drive (anyone/reader)
+ *   6. Crea un registro en Airtable con el link del archivo
+ *   7. Añade label "💰 facturas/drive" al email procesado
  *
  * Configuración requerida (Input Variables del Automation):
- *   - GMAIL_ACCESS_TOKEN: OAuth2 token con scopes gmail.modify
- *   - DRIVE_ACCESS_TOKEN: OAuth2 token con scopes drive.file
+ *   - GOOGLE_CLIENT_ID:     Client ID de Google Cloud Console
+ *   - GOOGLE_CLIENT_SECRET: Client Secret de Google Cloud Console
+ *   - GOOGLE_REFRESH_TOKEN: Refresh token con scopes:
+ *       https://www.googleapis.com/auth/gmail.modify
+ *       https://www.googleapis.com/auth/drive.file
  *
- * Nota: Los tokens OAuth2 deben renovarse externamente (p.ej. con un
- * servicio como Pipedream, n8n, o un script de refresh token).
+ * Cómo obtener el refresh token:
+ *   1. Crea un proyecto en Google Cloud Console
+ *   2. Habilita Gmail API y Google Drive API
+ *   3. Crea credenciales OAuth2 (tipo "Desktop app" o "Web app")
+ *   4. Usa OAuth Playground (https://developers.google.com/oauthplayground)
+ *      o un flujo manual para obtener el refresh_token con los scopes indicados
+ *   5. El refresh_token no caduca mientras la app esté en producción
+ *      (en modo "Testing" caduca cada 7 días)
  */
 
 // ─── CONFIGURACIÓN ───────────────────────────────────────────────
@@ -40,8 +50,44 @@ const CONFIG = {
 
 // ─── INPUT VARIABLES ─────────────────────────────────────────────
 const inputConfig = input.config();
-const GMAIL_TOKEN = inputConfig.GMAIL_ACCESS_TOKEN;
-const DRIVE_TOKEN = inputConfig.DRIVE_ACCESS_TOKEN;
+const GOOGLE_CLIENT_ID = inputConfig.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = inputConfig.GOOGLE_CLIENT_SECRET;
+const GOOGLE_REFRESH_TOKEN = inputConfig.GOOGLE_REFRESH_TOKEN;
+
+// ─── OAUTH2 TOKEN REFRESH ───────────────────────────────────────
+
+async function refreshAccessToken() {
+    const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: [
+            `client_id=${encodeURIComponent(GOOGLE_CLIENT_ID)}`,
+            `client_secret=${encodeURIComponent(GOOGLE_CLIENT_SECRET)}`,
+            `refresh_token=${encodeURIComponent(GOOGLE_REFRESH_TOKEN)}`,
+            'grant_type=refresh_token',
+        ].join('&'),
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error refrescando token OAuth2 (${response.status}): ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data.access_token;
+}
+
+// Un solo refresh token sirve para ambos (Gmail + Drive) si los scopes
+// se solicitaron juntos. Obtenemos un access_token fresco cada ejecución.
+let GOOGLE_TOKEN;
+async function ensureToken() {
+    if (!GOOGLE_TOKEN) {
+        console.log('Refrescando token OAuth2...');
+        GOOGLE_TOKEN = await refreshAccessToken();
+        console.log('Token obtenido correctamente.');
+    }
+    return GOOGLE_TOKEN;
+}
 
 // ─── HELPERS ─────────────────────────────────────────────────────
 
@@ -53,11 +99,12 @@ function formatDate(date) {
 }
 
 async function gmailFetch(endpoint, options = {}) {
+    const token = await ensureToken();
     const url = `https://gmail.googleapis.com/gmail/v1/users/me/${endpoint}`;
     const response = await fetch(url, {
         ...options,
         headers: {
-            'Authorization': `Bearer ${GMAIL_TOKEN}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
             ...options.headers,
         },
@@ -70,6 +117,7 @@ async function gmailFetch(endpoint, options = {}) {
 }
 
 async function driveFetch(endpoint, options = {}) {
+    const token = await ensureToken();
     const baseUrl = options.uploadUrl
         ? 'https://www.googleapis.com/upload/drive/v3/'
         : 'https://www.googleapis.com/drive/v3/';
@@ -77,7 +125,7 @@ async function driveFetch(endpoint, options = {}) {
     const response = await fetch(url, {
         ...options,
         headers: {
-            'Authorization': `Bearer ${DRIVE_TOKEN}`,
+            'Authorization': `Bearer ${token}`,
             ...options.headers,
         },
     });
@@ -180,11 +228,12 @@ async function uploadToDrive(filename, base64Data, mimeType, folderId) {
     body.set(base64Bytes, preamble.length);
     body.set(postamble, preamble.length + base64Bytes.length);
 
+    const token = await ensureToken();
     const url = `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
     const response = await fetch(url, {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${DRIVE_TOKEN}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': `multipart/related; boundary=${boundary}`,
         },
         body: body,
