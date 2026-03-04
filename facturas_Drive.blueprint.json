@@ -1,0 +1,2353 @@
+{
+    "name": "facturas_Drive",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-email:triggerWatchNewEmails",
+            "version": 4,
+            "parameters": {
+                "from": "",
+                "size": {
+                    "unit": "M",
+                    "amount": null,
+                    "criteria": "larger"
+                },
+                "limit": 50,
+                "folder": "INBOX",
+                "format": "full",
+                "subject": "",
+                "criteria": "all",
+                "labelIds": "Label_7109570217773719831",
+                "markSeen": false,
+                "filterType": "simpleSearch",
+                "__IMTCONN__": 4381841,
+                "excludeWords": "",
+                "includeWords": "",
+                "hasAttachment": false
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "WATCH_labelFacturas"
+                },
+                "restore": {
+                    "parameters": {
+                        "size": {
+                            "nested": {
+                                "unit": {
+                                    "label": "MB (megabytes)"
+                                },
+                                "criteria": {
+                                    "label": "Greater than"
+                                }
+                            }
+                        },
+                        "folder": {
+                            "label": "Inbox"
+                        },
+                        "format": {
+                            "label": "Full content"
+                        },
+                        "criteria": {
+                            "label": "All messages"
+                        },
+                        "labelIds": {
+                            "label": "💰 facturas"
+                        },
+                        "filterType": {
+                            "label": "Simple filter"
+                        },
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-email"
+                            },
+                            "label": "larc_v1 (luisalfonso@larc.es)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-email",
+                        "label": "Connection",
+                        "required": true
+                    },
+                    {
+                        "name": "filterType",
+                        "type": "select",
+                        "label": "Filter type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "simpleSearch",
+                                "gmailSearch"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "format",
+                        "type": "select",
+                        "label": "Content format",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "full",
+                                "raw",
+                                "metadata",
+                                "minimal"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "folder",
+                        "type": "select",
+                        "label": "Folder",
+                        "required": true
+                    },
+                    {
+                        "name": "labelIds",
+                        "type": "select",
+                        "label": "Label"
+                    },
+                    {
+                        "name": "criteria",
+                        "type": "select",
+                        "label": "Criteria",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "all",
+                                "is:read",
+                                "is:unread"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "markSeen",
+                        "type": "boolean",
+                        "label": "Mark email message(s) as read when fetched"
+                    },
+                    {
+                        "name": "limit",
+                        "type": "uinteger",
+                        "label": "Limit",
+                        "required": true,
+                        "validate": {
+                            "max": 500
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "type": "email",
+                        "label": "Sender email address"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "text",
+                        "label": "Subject"
+                    },
+                    {
+                        "name": "includeWords",
+                        "type": "text",
+                        "label": "Has the words"
+                    },
+                    {
+                        "name": "excludeWords",
+                        "type": "text",
+                        "label": "Doesn't have"
+                    },
+                    {
+                        "name": "size",
+                        "spec": [
+                            {
+                                "name": "criteria",
+                                "type": "select",
+                                "label": "Criteria",
+                                "validate": {
+                                    "enum": [
+                                        "larger",
+                                        "smaller"
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "amount",
+                                "type": "integer",
+                                "label": "Size",
+                                "validate": {
+                                    "min": 0
+                                }
+                            },
+                            {
+                                "name": "unit",
+                                "type": "select",
+                                "label": "Size unit",
+                                "validate": {
+                                    "enum": [
+                                        "M",
+                                        "K",
+                                        "bytes"
+                                    ]
+                                }
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Email size"
+                    },
+                    {
+                        "name": "hasAttachment",
+                        "type": "boolean",
+                        "label": "Only emails with attachments/media",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "id",
+                        "type": "text",
+                        "label": "Message ID"
+                    },
+                    {
+                        "name": "threadId",
+                        "type": "text",
+                        "label": "Thread ID"
+                    },
+                    {
+                        "name": "internalDate",
+                        "type": "date",
+                        "label": "Date"
+                    },
+                    {
+                        "name": "subject",
+                        "type": "text",
+                        "label": "Subject",
+                        "condition": true
+                    },
+                    {
+                        "name": "fromName",
+                        "type": "text",
+                        "label": "From (name)",
+                        "condition": true
+                    },
+                    {
+                        "name": "fromEmail",
+                        "type": "text",
+                        "label": "From (email)",
+                        "condition": true
+                    },
+                    {
+                        "name": "to",
+                        "spec": {
+                            "spec": [
+                                {
+                                    "name": "name",
+                                    "type": "text",
+                                    "label": "Name"
+                                },
+                                {
+                                    "name": "email",
+                                    "type": "text",
+                                    "label": "Email"
+                                }
+                            ],
+                            "type": "collection"
+                        },
+                        "type": "array",
+                        "label": "To",
+                        "condition": true
+                    },
+                    {
+                        "name": "cc",
+                        "spec": [
+                            {
+                                "name": "email",
+                                "type": "email",
+                                "label": "Email"
+                            },
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "CC",
+                        "condition": true
+                    },
+                    {
+                        "name": "bcc",
+                        "spec": [
+                            {
+                                "name": "email",
+                                "type": "email",
+                                "label": "Email"
+                            },
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Name"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "BCC",
+                        "condition": true
+                    },
+                    {
+                        "name": "snippet",
+                        "type": "text",
+                        "label": "Snippet"
+                    },
+                    {
+                        "name": "fullTextBody",
+                        "type": "text",
+                        "label": "Full text body",
+                        "condition": true
+                    },
+                    {
+                        "name": "htmlBody",
+                        "type": "text",
+                        "label": "HTML body",
+                        "condition": true
+                    },
+                    {
+                        "name": "hasAttachment",
+                        "type": "boolean",
+                        "label": "Has attachment",
+                        "condition": true
+                    },
+                    {
+                        "name": "hasMedia",
+                        "type": "boolean",
+                        "label": "Has media",
+                        "condition": true
+                    },
+                    {
+                        "name": "sysFolders",
+                        "spec": [
+                            {
+                                "name": "id",
+                                "type": "text",
+                                "label": "System folder ID"
+                            },
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "System folder name"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "System folders"
+                    },
+                    {
+                        "name": "categoryFolders",
+                        "spec": [
+                            {
+                                "name": "id",
+                                "type": "text",
+                                "label": "Category folder ID"
+                            },
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "Category folder name"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Category folders"
+                    },
+                    {
+                        "name": "userLabelFolders",
+                        "spec": [
+                            {
+                                "name": "id",
+                                "type": "text",
+                                "label": "User label folder ID"
+                            },
+                            {
+                                "name": "name",
+                                "type": "text",
+                                "label": "User label folder name"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "User label folders"
+                    },
+                    {
+                        "name": "labelIds",
+                        "spec": {
+                            "type": "text"
+                        },
+                        "type": "array",
+                        "label": "Message folder IDs"
+                    },
+                    {
+                        "name": "headers",
+                        "spec": [
+                            {
+                                "name": "Delivered-To",
+                                "type": "text",
+                                "label": "Delivered-To"
+                            },
+                            {
+                                "name": "Received",
+                                "type": "text",
+                                "label": "Received"
+                            },
+                            {
+                                "name": "Date",
+                                "type": "text",
+                                "label": "Date (header)"
+                            },
+                            {
+                                "name": "X-Original-Sender",
+                                "type": "text"
+                            },
+                            {
+                                "name": "Reply-To",
+                                "type": "text"
+                            },
+                            {
+                                "name": "Subject",
+                                "type": "text",
+                                "label": "Subject"
+                            },
+                            {
+                                "name": "From",
+                                "type": "text",
+                                "label": "From"
+                            },
+                            {
+                                "name": "To",
+                                "type": "text",
+                                "label": "To"
+                            },
+                            {
+                                "name": "Message-ID",
+                                "type": "text",
+                                "label": "Message-ID"
+                            },
+                            {
+                                "name": "In-Reply-To",
+                                "type": "text",
+                                "label": "In-Reply-To"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Headers",
+                        "condition": true
+                    },
+                    {
+                        "name": "sizeEstimate",
+                        "type": "number",
+                        "label": "Size estimate"
+                    },
+                    {
+                        "name": "historyId",
+                        "type": "text",
+                        "label": "History ID"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "google-email:listEmailAttachments",
+            "version": 4,
+            "parameters": {
+                "__IMTCONN__": 4381841
+            },
+            "mapper": {
+                "include": [
+                    "attachment",
+                    "media"
+                ],
+                "messageId": "{{1.id}}",
+                "returnAttachmentData": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "LIST_adjunto"
+                },
+                "restore": {
+                    "expect": {
+                        "include": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-email"
+                            },
+                            "label": "larc_v1 (luisalfonso@larc.es)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-email",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "messageId",
+                        "type": "text",
+                        "label": "Message ID",
+                        "required": true
+                    },
+                    {
+                        "name": "include",
+                        "type": "select",
+                        "label": "Include",
+                        "multiple": true,
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "attachment",
+                                "media"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "returnAttachmentData",
+                        "type": "boolean",
+                        "label": "Return media or attachment file data",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "google-drive:uploadAFile",
+            "version": 4,
+            "parameters": {
+                "__IMTCONN__": 4344376
+            },
+            "mapper": {
+                "data": "{{4.data}}",
+                "select": "map",
+                "convert": false,
+                "filename": "{{if(4.filename; 4.filename; \"factura\" + 1.fromEmail + \" .pdf\")}}",
+                "folderId": "1JSdMECjTtLAA_irT5GRfVHmkVga07EDH"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "UPLOAD_drive"
+                },
+                "restore": {
+                    "expect": {
+                        "select": {
+                            "label": "Enter manually"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-restricted"
+                            },
+                            "label": "larc_v2 (luisalfonso@larc.es)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-restricted",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "select",
+                        "type": "select",
+                        "label": "Enter a Folder ID",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "map",
+                                "value"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "type": "text",
+                        "label": "New File Name"
+                    },
+                    {
+                        "name": "filename",
+                        "type": "text",
+                        "label": "File Name",
+                        "required": true
+                    },
+                    {
+                        "name": "data",
+                        "type": "buffer",
+                        "label": "Data",
+                        "required": true
+                    },
+                    {
+                        "name": "convert",
+                        "type": "boolean",
+                        "label": "Convert a File",
+                        "required": true
+                    },
+                    {
+                        "name": "folderId",
+                        "type": "text",
+                        "label": "Folder ID",
+                        "required": true
+                    }
+                ]
+            },
+            "onerror": [
+                {
+                    "id": 9,
+                    "module": "builtin:Ignore",
+                    "version": 1,
+                    "metadata": {
+                        "designer": {
+                            "x": 900,
+                            "y": 150
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "module": "google-email:updateEmailLabels",
+            "version": 4,
+            "parameters": {
+                "__IMTCONN__": 4381841
+            },
+            "mapper": {
+                "addLabels": [
+                    "Label_1719739415214180985"
+                ],
+                "messageId": "{{1.id}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": -150,
+                    "name": "UPDATE_label"
+                },
+                "restore": {
+                    "expect": {
+                        "addLabels": {
+                            "mode": "chose"
+                        },
+                        "messageId": {
+                            "nested": [
+                                {
+                                    "help": "To ensure you see the most up-to-date labels, refresh **↻** the Message ID above.",
+                                    "name": "addLabels",
+                                    "type": "select",
+                                    "label": "Labels to add",
+                                    "dynamic": true,
+                                    "options": [
+                                        {
+                                            "label": "[Notion]",
+                                            "value": "Label_1"
+                                        },
+                                        {
+                                            "label": "⏰ Timely",
+                                            "value": "Label_13"
+                                        },
+                                        {
+                                            "label": "✅ Todo",
+                                            "value": "Label_12"
+                                        },
+                                        {
+                                            "label": "✉️ All Briefs",
+                                            "value": "Label_14"
+                                        },
+                                        {
+                                            "label": "✒️ Needs Response",
+                                            "value": "Label_11"
+                                        },
+                                        {
+                                            "label": "🍇 feed",
+                                            "value": "Label_5116425034064106407"
+                                        },
+                                        {
+                                            "label": "💰 facturas",
+                                            "value": "Label_7109570217773719831"
+                                        },
+                                        {
+                                            "label": "💰 facturas/drive",
+                                            "value": "Label_1719739415214180985"
+                                        },
+                                        {
+                                            "label": "💰 facturas/quipu",
+                                            "value": "Label_3871671011621033071"
+                                        },
+                                        {
+                                            "label": "💰 facturas/tools",
+                                            "value": "Label_5375784098385929380"
+                                        },
+                                        {
+                                            "label": "💰 facturas/transporte",
+                                            "value": "Label_8395790517686377721"
+                                        },
+                                        {
+                                            "label": "📥 Next Brief",
+                                            "value": "Label_10"
+                                        },
+                                        {
+                                            "label": "🧪 test",
+                                            "value": "Label_92549492147046891"
+                                        },
+                                        {
+                                            "label": "🚨 Acción",
+                                            "value": "Label_8926718002309494166"
+                                        },
+                                        {
+                                            "label": "🚨 Acción/ParaEliminar",
+                                            "value": "Label_3530205731061907655"
+                                        },
+                                        {
+                                            "label": "Admin",
+                                            "value": "Label_3904112808349690663"
+                                        },
+                                        {
+                                            "label": "Admin/La Oficcina",
+                                            "value": "Label_2504857388467238654"
+                                        },
+                                        {
+                                            "label": "Admin/licencias",
+                                            "value": "Label_5609757022332698290"
+                                        },
+                                        {
+                                            "label": "Admin/SinOficina",
+                                            "value": "Label_4439943480740850825"
+                                        },
+                                        {
+                                            "label": "Aprender",
+                                            "value": "Label_2449421221105664713"
+                                        },
+                                        {
+                                            "label": "Aprender/Cardinal",
+                                            "value": "Label_1986211772980994609"
+                                        },
+                                        {
+                                            "label": "Aprender/Design Graduate",
+                                            "value": "Label_6571499102707304183"
+                                        },
+                                        {
+                                            "label": "Aprender/recursos",
+                                            "value": "Label_6400626668934429206"
+                                        },
+                                        {
+                                            "label": "Aprender/System Design Kit",
+                                            "value": "Label_4511704133266071096"
+                                        },
+                                        {
+                                            "label": "Aprender/Tools",
+                                            "value": "Label_8758403438618265088"
+                                        },
+                                        {
+                                            "label": "Aprender/Tools/Airtable",
+                                            "value": "Label_4354254193163962311"
+                                        },
+                                        {
+                                            "label": "Cora",
+                                            "value": "Label_2"
+                                        },
+                                        {
+                                            "label": "Cora/Action",
+                                            "value": "Label_5"
+                                        },
+                                        {
+                                            "label": "Cora/Calendar",
+                                            "value": "Label_9"
+                                        },
+                                        {
+                                            "label": "Cora/Important Info",
+                                            "value": "Label_4"
+                                        },
+                                        {
+                                            "label": "Cora/Newsletter",
+                                            "value": "Label_3"
+                                        },
+                                        {
+                                            "label": "Cora/Other",
+                                            "value": "Label_6"
+                                        },
+                                        {
+                                            "label": "Cora/Payments",
+                                            "value": "Label_7"
+                                        },
+                                        {
+                                            "label": "Cora/Promotion",
+                                            "value": "Label_8"
+                                        },
+                                        {
+                                            "label": "English with Benen",
+                                            "value": "Label_2615186159645416982"
+                                        },
+                                        {
+                                            "label": "esade",
+                                            "value": "Label_9031641399184310124"
+                                        },
+                                        {
+                                            "label": "hostelgrup",
+                                            "value": "Label_3825909272917203657"
+                                        },
+                                        {
+                                            "label": "La Guarida",
+                                            "value": "Label_1215309219802885976"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes",
+                                            "value": "Label_1256935982253165581"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/02_UFV",
+                                            "value": "Label_8435930727670125519"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/03_Levo",
+                                            "value": "Label_4558485365764335874"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/04_ImpactHub",
+                                            "value": "Label_8697871558187292140"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/05_AdriCondeVet",
+                                            "value": "Label_3749486653115014372"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/06_ArtMatamoa",
+                                            "value": "Label_5381908993044848966"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/09_DrGoosen",
+                                            "value": "Label_7814920578363118417"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/10_LaLagareta",
+                                            "value": "Label_5319376159775486598"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/11_Aurelie",
+                                            "value": "Label_8387224037738008943"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/12_RaulRomero",
+                                            "value": "Label_8662721619627834340"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/13_Biolinea",
+                                            "value": "Label_8950937372956051344"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/14_Instituto Manchego",
+                                            "value": "Label_755948543521703562"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/nch",
+                                            "value": "Label_3126194255183065119"
+                                        },
+                                        {
+                                            "label": "La Guarida/Obra propia",
+                                            "value": "Label_8604644256537567454"
+                                        },
+                                        {
+                                            "label": "La Guarida/Obra propia/doto",
+                                            "value": "Label_3628374716113293017"
+                                        },
+                                        {
+                                            "label": "La Guarida/Visitantes",
+                                            "value": "Label_6834627630361214950"
+                                        },
+                                        {
+                                            "label": "Landbot",
+                                            "value": "Label_3024699432368159431"
+                                        },
+                                        {
+                                            "label": "Later",
+                                            "value": "Label_19"
+                                        },
+                                        {
+                                            "label": "Liberados",
+                                            "value": "Label_1850881232482699188"
+                                        },
+                                        {
+                                            "label": "Mutter",
+                                            "value": "Label_5940018101397924430"
+                                        },
+                                        {
+                                            "label": "mutter_concurso",
+                                            "value": "Label_1492431993699801257"
+                                        },
+                                        {
+                                            "label": "MX LIndo",
+                                            "value": "Label_6772135552243551886"
+                                        },
+                                        {
+                                            "label": "saldados",
+                                            "value": "Label_2112476455487028559"
+                                        }
+                                    ],
+                                    "mappable": {
+                                        "help": "Enter label IDs by comma (,)."
+                                    },
+                                    "multiple": true
+                                },
+                                {
+                                    "help": "To ensure you see the most up-to-date labels, refresh **↻** the Message ID above.",
+                                    "name": "removeLabels",
+                                    "type": "select",
+                                    "label": "Labels to remove",
+                                    "dynamic": true,
+                                    "options": [
+                                        {
+                                            "label": "[Notion]",
+                                            "value": "Label_1"
+                                        },
+                                        {
+                                            "label": "⏰ Timely",
+                                            "value": "Label_13"
+                                        },
+                                        {
+                                            "label": "✅ Todo",
+                                            "value": "Label_12"
+                                        },
+                                        {
+                                            "label": "✉️ All Briefs",
+                                            "value": "Label_14"
+                                        },
+                                        {
+                                            "label": "✒️ Needs Response",
+                                            "value": "Label_11"
+                                        },
+                                        {
+                                            "label": "🍇 feed",
+                                            "value": "Label_5116425034064106407"
+                                        },
+                                        {
+                                            "label": "💰 facturas",
+                                            "value": "Label_7109570217773719831"
+                                        },
+                                        {
+                                            "label": "💰 facturas/drive",
+                                            "value": "Label_1719739415214180985"
+                                        },
+                                        {
+                                            "label": "💰 facturas/quipu",
+                                            "value": "Label_3871671011621033071"
+                                        },
+                                        {
+                                            "label": "💰 facturas/tools",
+                                            "value": "Label_5375784098385929380"
+                                        },
+                                        {
+                                            "label": "💰 facturas/transporte",
+                                            "value": "Label_8395790517686377721"
+                                        },
+                                        {
+                                            "label": "📥 Next Brief",
+                                            "value": "Label_10"
+                                        },
+                                        {
+                                            "label": "🧪 test",
+                                            "value": "Label_92549492147046891"
+                                        },
+                                        {
+                                            "label": "🚨 Acción",
+                                            "value": "Label_8926718002309494166"
+                                        },
+                                        {
+                                            "label": "🚨 Acción/ParaEliminar",
+                                            "value": "Label_3530205731061907655"
+                                        },
+                                        {
+                                            "label": "Admin",
+                                            "value": "Label_3904112808349690663"
+                                        },
+                                        {
+                                            "label": "Admin/La Oficcina",
+                                            "value": "Label_2504857388467238654"
+                                        },
+                                        {
+                                            "label": "Admin/licencias",
+                                            "value": "Label_5609757022332698290"
+                                        },
+                                        {
+                                            "label": "Admin/SinOficina",
+                                            "value": "Label_4439943480740850825"
+                                        },
+                                        {
+                                            "label": "Aprender",
+                                            "value": "Label_2449421221105664713"
+                                        },
+                                        {
+                                            "label": "Aprender/Cardinal",
+                                            "value": "Label_1986211772980994609"
+                                        },
+                                        {
+                                            "label": "Aprender/Design Graduate",
+                                            "value": "Label_6571499102707304183"
+                                        },
+                                        {
+                                            "label": "Aprender/recursos",
+                                            "value": "Label_6400626668934429206"
+                                        },
+                                        {
+                                            "label": "Aprender/System Design Kit",
+                                            "value": "Label_4511704133266071096"
+                                        },
+                                        {
+                                            "label": "Aprender/Tools",
+                                            "value": "Label_8758403438618265088"
+                                        },
+                                        {
+                                            "label": "Aprender/Tools/Airtable",
+                                            "value": "Label_4354254193163962311"
+                                        },
+                                        {
+                                            "label": "Cora",
+                                            "value": "Label_2"
+                                        },
+                                        {
+                                            "label": "Cora/Action",
+                                            "value": "Label_5"
+                                        },
+                                        {
+                                            "label": "Cora/Calendar",
+                                            "value": "Label_9"
+                                        },
+                                        {
+                                            "label": "Cora/Important Info",
+                                            "value": "Label_4"
+                                        },
+                                        {
+                                            "label": "Cora/Newsletter",
+                                            "value": "Label_3"
+                                        },
+                                        {
+                                            "label": "Cora/Other",
+                                            "value": "Label_6"
+                                        },
+                                        {
+                                            "label": "Cora/Payments",
+                                            "value": "Label_7"
+                                        },
+                                        {
+                                            "label": "Cora/Promotion",
+                                            "value": "Label_8"
+                                        },
+                                        {
+                                            "label": "English with Benen",
+                                            "value": "Label_2615186159645416982"
+                                        },
+                                        {
+                                            "label": "esade",
+                                            "value": "Label_9031641399184310124"
+                                        },
+                                        {
+                                            "label": "hostelgrup",
+                                            "value": "Label_3825909272917203657"
+                                        },
+                                        {
+                                            "label": "La Guarida",
+                                            "value": "Label_1215309219802885976"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes",
+                                            "value": "Label_1256935982253165581"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/02_UFV",
+                                            "value": "Label_8435930727670125519"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/03_Levo",
+                                            "value": "Label_4558485365764335874"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/04_ImpactHub",
+                                            "value": "Label_8697871558187292140"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/05_AdriCondeVet",
+                                            "value": "Label_3749486653115014372"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/06_ArtMatamoa",
+                                            "value": "Label_5381908993044848966"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/09_DrGoosen",
+                                            "value": "Label_7814920578363118417"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/10_LaLagareta",
+                                            "value": "Label_5319376159775486598"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/11_Aurelie",
+                                            "value": "Label_8387224037738008943"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/12_RaulRomero",
+                                            "value": "Label_8662721619627834340"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/13_Biolinea",
+                                            "value": "Label_8950937372956051344"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/14_Instituto Manchego",
+                                            "value": "Label_755948543521703562"
+                                        },
+                                        {
+                                            "label": "La Guarida/Habitantes/nch",
+                                            "value": "Label_3126194255183065119"
+                                        },
+                                        {
+                                            "label": "La Guarida/Obra propia",
+                                            "value": "Label_8604644256537567454"
+                                        },
+                                        {
+                                            "label": "La Guarida/Obra propia/doto",
+                                            "value": "Label_3628374716113293017"
+                                        },
+                                        {
+                                            "label": "La Guarida/Visitantes",
+                                            "value": "Label_6834627630361214950"
+                                        },
+                                        {
+                                            "label": "Landbot",
+                                            "value": "Label_3024699432368159431"
+                                        },
+                                        {
+                                            "label": "Later",
+                                            "value": "Label_19"
+                                        },
+                                        {
+                                            "label": "Liberados",
+                                            "value": "Label_1850881232482699188"
+                                        },
+                                        {
+                                            "label": "Mutter",
+                                            "value": "Label_5940018101397924430"
+                                        },
+                                        {
+                                            "label": "mutter_concurso",
+                                            "value": "Label_1492431993699801257"
+                                        },
+                                        {
+                                            "label": "MX LIndo",
+                                            "value": "Label_6772135552243551886"
+                                        },
+                                        {
+                                            "label": "saldados",
+                                            "value": "Label_2112476455487028559"
+                                        }
+                                    ],
+                                    "mappable": {
+                                        "help": "Enter label IDs by comma (,)."
+                                    },
+                                    "multiple": true
+                                }
+                            ]
+                        },
+                        "removeLabels": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-email"
+                            },
+                            "label": "larc_v1 (luisalfonso@larc.es)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-email",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "messageId",
+                        "type": "text",
+                        "label": "Message ID",
+                        "required": true
+                    },
+                    {
+                        "name": "addLabels",
+                        "type": "select",
+                        "label": "Labels to add",
+                        "multiple": true
+                    },
+                    {
+                        "name": "removeLabels",
+                        "type": "select",
+                        "label": "Labels to remove",
+                        "multiple": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 8,
+            "module": "google-drive:shareAFileFolder",
+            "version": 4,
+            "parameters": {
+                "__IMTCONN__": 4344376
+            },
+            "mapper": {
+                "file": "{{2.id}}",
+                "role": "reader",
+                "type": "anyone",
+                "select": "file",
+                "destination": "drive",
+                "allowFileDiscovery": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1200,
+                    "y": 0,
+                    "name": "GET_link"
+                },
+                "restore": {
+                    "expect": {
+                        "file": {
+                            "mode": "edit",
+                            "path": []
+                        },
+                        "role": {
+                            "mode": "chose",
+                            "label": "Reader"
+                        },
+                        "type": {
+                            "mode": "chose",
+                            "label": "Anyone"
+                        },
+                        "select": {
+                            "label": "File"
+                        },
+                        "destination": {
+                            "label": "My Drive"
+                        },
+                        "allowFileDiscovery": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google-restricted"
+                            },
+                            "label": "larc_v2 (luisalfonso@larc.es)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google-restricted",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "destination",
+                        "type": "select",
+                        "label": "Choose a Drive",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "select",
+                        "type": "select",
+                        "label": "Select",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "file",
+                                "folder"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "role",
+                        "type": "select",
+                        "label": "Role",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "owner",
+                                "writer",
+                                "commenter",
+                                "reader"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "type": "select",
+                        "label": "Type",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "user",
+                                "group",
+                                "domain",
+                                "anyone"
+                            ]
+                        }
+                    },
+                    {
+                        "mode": "edit",
+                        "name": "file",
+                        "type": "file",
+                        "label": "File ID",
+                        "required": true
+                    },
+                    {
+                        "name": "allowFileDiscovery",
+                        "type": "boolean",
+                        "label": "Allow File Discovery",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "fileId",
+                        "type": "text",
+                        "label": "File ID"
+                    },
+                    {
+                        "name": "kind",
+                        "type": "text",
+                        "label": "Kind"
+                    },
+                    {
+                        "name": "id",
+                        "type": "text",
+                        "label": "Permission ID"
+                    },
+                    {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                    },
+                    {
+                        "name": "shareLink",
+                        "type": "url",
+                        "label": "Share Link"
+                    },
+                    {
+                        "name": "emailAddress",
+                        "type": "text",
+                        "label": "Email Address"
+                    },
+                    {
+                        "name": "domain",
+                        "type": "text",
+                        "label": "Domain"
+                    },
+                    {
+                        "name": "role",
+                        "type": "text",
+                        "label": "Role"
+                    },
+                    {
+                        "name": "allowFileDiscovery",
+                        "type": "boolean",
+                        "label": "Allow File Discovery"
+                    },
+                    {
+                        "name": "displayName",
+                        "type": "text",
+                        "label": "Display Name"
+                    },
+                    {
+                        "name": "photoLink",
+                        "type": "text",
+                        "label": "Photo Link"
+                    },
+                    {
+                        "name": "expirationTime",
+                        "type": "date",
+                        "label": "Expiration Time"
+                    },
+                    {
+                        "name": "teamDrivePermissionDetails",
+                        "spec": {
+                            "spec": [
+                                {
+                                    "name": "teamDrivePermissionType",
+                                    "type": "text",
+                                    "label": "Team Drive Permission Type"
+                                },
+                                {
+                                    "name": "role",
+                                    "type": "text",
+                                    "label": "Role"
+                                },
+                                {
+                                    "name": "inheritedFrom",
+                                    "type": "text",
+                                    "label": "Inherited From"
+                                },
+                                {
+                                    "name": "inherited",
+                                    "type": "boolean",
+                                    "label": "Inherited"
+                                }
+                            ],
+                            "type": "collection"
+                        },
+                        "type": "array",
+                        "label": "Team Drive Permission Details"
+                    },
+                    {
+                        "name": "permissionDetails",
+                        "spec": {
+                            "spec": [
+                                {
+                                    "name": "permissionType",
+                                    "type": "text",
+                                    "label": "Permission Type"
+                                },
+                                {
+                                    "name": "role",
+                                    "type": "text",
+                                    "label": "Role"
+                                },
+                                {
+                                    "name": "inheritedFrom",
+                                    "type": "text",
+                                    "label": "Inherited From"
+                                },
+                                {
+                                    "name": "inherited",
+                                    "type": "boolean",
+                                    "label": "Inherited"
+                                }
+                            ],
+                            "type": "collection"
+                        },
+                        "type": "array",
+                        "label": "Permission Details"
+                    },
+                    {
+                        "name": "deleted",
+                        "type": "boolean",
+                        "label": "Deleted"
+                    },
+                    {
+                        "name": "pendingOwner",
+                        "type": "boolean",
+                        "label": "Pending Owner"
+                    },
+                    {
+                        "name": "webContentLink",
+                        "type": "url",
+                        "label": "Web Content Link"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 7,
+            "module": "airtable:ActionCreateRecord",
+            "version": 3,
+            "parameters": {
+                "__IMTCONN__": 3253859
+            },
+            "mapper": {
+                "base": "appbbMBmGsgscGu2G",
+                "table": "tbluQ9HMNk8iwDibG",
+                "record": {
+                    "fldGDTeltM9jNaYnP": [
+                        {
+                            "url": "{{8.webContentLink}}",
+                            "filename": "{{formatDate(1.internalDate; \"YYMMDD\")}}_{{1.fromName}}.pdf"
+                        }
+                    ],
+                    "fldb0HSqLiCM48f1I": "Machine",
+                    "fldfijvgbKd1hPoTM": "{{formatDate(1.internalDate; \"YYMMDD\")}}_{{1.fromName}}.pdf"
+                },
+                "typecast": false,
+                "useColumnId": false
+            },
+            "metadata": {
+                "designer": {
+                    "x": 1500,
+                    "y": 0,
+                    "name": "CREATE_factura"
+                },
+                "restore": {
+                    "expect": {
+                        "base": {
+                            "label": "lectorFacturas"
+                        },
+                        "table": {
+                            "label": "facturas",
+                            "nested": [
+                                {
+                                    "name": "record",
+                                    "spec": [
+                                        {
+                                            "name": "fldSr8BqyntQENAGW",
+                                            "type": "text",
+                                            "label": "tipo"
+                                        },
+                                        {
+                                            "name": "fldfijvgbKd1hPoTM",
+                                            "type": "text",
+                                            "label": "nombreFactura"
+                                        },
+                                        {
+                                            "name": "fldJzul0F8JqFe6Ti",
+                                            "time": false,
+                                            "type": "date",
+                                            "label": "Fecha de pago"
+                                        },
+                                        {
+                                            "mode": "edit",
+                                            "name": "fldW8cO9kmeFx9AQu",
+                                            "type": "select",
+                                            "label": "Estado de pago",
+                                            "dynamic": true,
+                                            "options": [
+                                                {
+                                                    "label": "Pendiente",
+                                                    "value": "Pendiente"
+                                                },
+                                                {
+                                                    "label": "Pagado",
+                                                    "value": "Pagado"
+                                                },
+                                                {
+                                                    "label": "Impagado",
+                                                    "value": "Impagado"
+                                                }
+                                            ],
+                                            "validate": false
+                                        },
+                                        {
+                                            "name": "fldUdTa2ZmyRPP9kY",
+                                            "type": "text",
+                                            "label": "Numeración",
+                                            "multiline": true
+                                        },
+                                        {
+                                            "name": "fldE3kGSr0lmh0cpW",
+                                            "type": "text",
+                                            "label": "Número de cuenta"
+                                        },
+                                        {
+                                            "name": "fldzUfh66Lmkkc6R8",
+                                            "type": "text",
+                                            "label": "SWIFT/BIC",
+                                            "multiline": true
+                                        },
+                                        {
+                                            "name": "fldmywJLdhEPeGBsi",
+                                            "type": "text",
+                                            "label": "Código contable proveedor"
+                                        },
+                                        {
+                                            "name": "fldhZyoISTKn6qA4e",
+                                            "type": "number",
+                                            "label": "Base unitaria"
+                                        },
+                                        {
+                                            "name": "fldtyGLourZ4TaONO",
+                                            "type": "number",
+                                            "label": "Cantidad"
+                                        },
+                                        {
+                                            "name": "fldUlOVHSmviBBjMb",
+                                            "type": "number",
+                                            "label": "IVA (%)"
+                                        },
+                                        {
+                                            "name": "fldGDTeltM9jNaYnP",
+                                            "spec": [
+                                                {
+                                                    "help": "Airtable will download the file at the given url and keep its own copy of it.",
+                                                    "name": "url",
+                                                    "type": "text",
+                                                    "label": "File URL"
+                                                },
+                                                {
+                                                    "help": "If empty, Airtable will generate the name automatically.",
+                                                    "name": "filename",
+                                                    "type": "filename",
+                                                    "label": "File name"
+                                                }
+                                            ],
+                                            "type": "array",
+                                            "label": "factura",
+                                            "editable": true
+                                        },
+                                        {
+                                            "name": "fldAsavzzIzzOeIXz",
+                                            "type": "number",
+                                            "label": "Recargo de equivalencia"
+                                        },
+                                        {
+                                            "name": "fldkhKifJTlgA90Bu",
+                                            "type": "number",
+                                            "label": "Retención (%)"
+                                        },
+                                        {
+                                            "name": "fldonxnm9bZ3qgHfu",
+                                            "type": "number",
+                                            "label": "Sección"
+                                        },
+                                        {
+                                            "name": "fldcwa89EkCVwRpJc",
+                                            "type": "number",
+                                            "label": "Epígrafe"
+                                        },
+                                        {
+                                            "mode": "edit",
+                                            "name": "fldbKBXpa9N4ZtsID",
+                                            "type": "select",
+                                            "label": "Tipo de documento fiscal",
+                                            "dynamic": true,
+                                            "options": [
+                                                {
+                                                    "label": "NIF",
+                                                    "value": "NIF"
+                                                },
+                                                {
+                                                    "label": "none",
+                                                    "value": "none"
+                                                }
+                                            ],
+                                            "validate": false
+                                        },
+                                        {
+                                            "mode": "edit",
+                                            "name": "fldb0HSqLiCM48f1I",
+                                            "type": "select",
+                                            "label": "source",
+                                            "dynamic": true,
+                                            "options": [
+                                                {
+                                                    "label": "2025",
+                                                    "value": "2025"
+                                                },
+                                                {
+                                                    "label": "Machine",
+                                                    "value": "Machine"
+                                                },
+                                                {
+                                                    "label": "Manual",
+                                                    "value": "Manual"
+                                                }
+                                            ],
+                                            "validate": false
+                                        },
+                                        {
+                                            "name": "fldJEklI6kraNVW6Y",
+                                            "time": false,
+                                            "type": "date",
+                                            "label": "Copia de Fecha de emisión"
+                                        },
+                                        {
+                                            "name": "fldigbU5tnmboQZqn",
+                                            "spec": {
+                                                "label": "Record ID"
+                                            },
+                                            "type": "array",
+                                            "label": "Copia de Nombre"
+                                        },
+                                        {
+                                            "name": "fldjnXdrrrpPYJUbd",
+                                            "type": "number",
+                                            "label": "IVA (€)"
+                                        },
+                                        {
+                                            "name": "fldQ7pzUqhFQkbDK1",
+                                            "type": "number",
+                                            "label": "total"
+                                        },
+                                        {
+                                            "mode": "edit",
+                                            "name": "fldaxOT8cNxnPygpo",
+                                            "type": "select",
+                                            "label": "moneda",
+                                            "dynamic": true,
+                                            "options": [
+                                                {
+                                                    "label": "EUR",
+                                                    "value": "EUR"
+                                                },
+                                                {
+                                                    "label": "USD",
+                                                    "value": "USD"
+                                                }
+                                            ],
+                                            "validate": false
+                                        },
+                                        {
+                                            "mode": "edit",
+                                            "name": "fldPgXiGu8V5fnCHH",
+                                            "type": "select",
+                                            "label": "Seleccionar",
+                                            "dynamic": true,
+                                            "options": [
+                                                {
+                                                    "label": "Pendiente",
+                                                    "value": "Pendiente"
+                                                },
+                                                {
+                                                    "label": "Revisada",
+                                                    "value": "Revisada"
+                                                }
+                                            ],
+                                            "validate": false
+                                        }
+                                    ],
+                                    "type": "collection",
+                                    "label": "Record"
+                                }
+                            ]
+                        },
+                        "record": {
+                            "nested": {
+                                "fldGDTeltM9jNaYnP": {
+                                    "mode": "chose",
+                                    "items": [
+                                        null
+                                    ]
+                                },
+                                "fldPgXiGu8V5fnCHH": {
+                                    "mode": "chose",
+                                    "label": "Empty"
+                                },
+                                "fldW8cO9kmeFx9AQu": {
+                                    "mode": "edit"
+                                },
+                                "fldaxOT8cNxnPygpo": {
+                                    "mode": "edit"
+                                },
+                                "fldb0HSqLiCM48f1I": {
+                                    "mode": "chose",
+                                    "label": "Machine"
+                                },
+                                "fldbKBXpa9N4ZtsID": {
+                                    "mode": "edit"
+                                },
+                                "fldigbU5tnmboQZqn": {
+                                    "mode": "chose"
+                                }
+                            }
+                        },
+                        "typecast": {
+                            "mode": "chose"
+                        },
+                        "useColumnId": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "airtable3"
+                            },
+                            "label": "26May25 (User ID: usrbGNrKCRnJKZfll)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:airtable3,airtable2",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "base",
+                        "type": "select",
+                        "label": "Base",
+                        "required": true
+                    },
+                    {
+                        "name": "typecast",
+                        "type": "boolean",
+                        "label": "Smart links",
+                        "required": true
+                    },
+                    {
+                        "name": "useColumnId",
+                        "type": "boolean",
+                        "label": "Use Column ID",
+                        "required": true
+                    },
+                    {
+                        "name": "table",
+                        "type": "select",
+                        "label": "Table",
+                        "required": true
+                    },
+                    {
+                        "name": "record",
+                        "spec": [
+                            {
+                                "name": "fldSr8BqyntQENAGW",
+                                "type": "text",
+                                "label": "tipo"
+                            },
+                            {
+                                "name": "fldfijvgbKd1hPoTM",
+                                "type": "text",
+                                "label": "nombreFactura"
+                            },
+                            {
+                                "name": "fldJzul0F8JqFe6Ti",
+                                "time": false,
+                                "type": "date",
+                                "label": "Fecha de pago"
+                            },
+                            {
+                                "mode": "edit",
+                                "name": "fldW8cO9kmeFx9AQu",
+                                "type": "select",
+                                "label": "Estado de pago"
+                            },
+                            {
+                                "name": "fldUdTa2ZmyRPP9kY",
+                                "type": "text",
+                                "label": "Numeración"
+                            },
+                            {
+                                "name": "fldE3kGSr0lmh0cpW",
+                                "type": "text",
+                                "label": "Número de cuenta"
+                            },
+                            {
+                                "name": "fldzUfh66Lmkkc6R8",
+                                "type": "text",
+                                "label": "SWIFT/BIC"
+                            },
+                            {
+                                "name": "fldmywJLdhEPeGBsi",
+                                "type": "text",
+                                "label": "Código contable proveedor"
+                            },
+                            {
+                                "name": "fldhZyoISTKn6qA4e",
+                                "type": "number",
+                                "label": "Base unitaria"
+                            },
+                            {
+                                "name": "fldtyGLourZ4TaONO",
+                                "type": "number",
+                                "label": "Cantidad"
+                            },
+                            {
+                                "name": "fldUlOVHSmviBBjMb",
+                                "type": "number",
+                                "label": "IVA (%)"
+                            },
+                            {
+                                "name": "fldGDTeltM9jNaYnP",
+                                "spec": [
+                                    {
+                                        "name": "url",
+                                        "type": "text",
+                                        "label": "File URL"
+                                    },
+                                    {
+                                        "name": "filename",
+                                        "type": "filename",
+                                        "label": "File name"
+                                    }
+                                ],
+                                "type": "array",
+                                "label": "factura"
+                            },
+                            {
+                                "name": "fldAsavzzIzzOeIXz",
+                                "type": "number",
+                                "label": "Recargo de equivalencia"
+                            },
+                            {
+                                "name": "fldkhKifJTlgA90Bu",
+                                "type": "number",
+                                "label": "Retención (%)"
+                            },
+                            {
+                                "name": "fldonxnm9bZ3qgHfu",
+                                "type": "number",
+                                "label": "Sección"
+                            },
+                            {
+                                "name": "fldcwa89EkCVwRpJc",
+                                "type": "number",
+                                "label": "Epígrafe"
+                            },
+                            {
+                                "mode": "edit",
+                                "name": "fldbKBXpa9N4ZtsID",
+                                "type": "select",
+                                "label": "Tipo de documento fiscal"
+                            },
+                            {
+                                "mode": "edit",
+                                "name": "fldb0HSqLiCM48f1I",
+                                "type": "select",
+                                "label": "source"
+                            },
+                            {
+                                "name": "fldJEklI6kraNVW6Y",
+                                "time": false,
+                                "type": "date",
+                                "label": "Copia de Fecha de emisión"
+                            },
+                            {
+                                "name": "fldigbU5tnmboQZqn",
+                                "spec": {
+                                    "name": "value",
+                                    "label": "Record ID"
+                                },
+                                "type": "array",
+                                "label": "Copia de Nombre"
+                            },
+                            {
+                                "name": "fldjnXdrrrpPYJUbd",
+                                "type": "number",
+                                "label": "IVA (€)"
+                            },
+                            {
+                                "name": "fldQ7pzUqhFQkbDK1",
+                                "type": "number",
+                                "label": "total"
+                            },
+                            {
+                                "mode": "edit",
+                                "name": "fldaxOT8cNxnPygpo",
+                                "type": "select",
+                                "label": "moneda"
+                            },
+                            {
+                                "mode": "edit",
+                                "name": "fldPgXiGu8V5fnCHH",
+                                "type": "select",
+                                "label": "Seleccionar"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Record"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                    },
+                    {
+                        "name": "createdTime",
+                        "type": "date",
+                        "label": "Created Time"
+                    },
+                    {
+                        "name": "tipo",
+                        "type": "text",
+                        "label": "tipo"
+                    },
+                    {
+                        "name": "nombreFactura",
+                        "type": "text",
+                        "label": "nombreFactura"
+                    },
+                    {
+                        "name": "Fecha de emisión",
+                        "type": "text",
+                        "label": "Fecha de emisión"
+                    },
+                    {
+                        "name": "Fecha de vencimiento",
+                        "type": "text",
+                        "label": "Fecha de vencimiento"
+                    },
+                    {
+                        "name": "Fecha de pago",
+                        "time": false,
+                        "type": "date",
+                        "label": "Fecha de pago"
+                    },
+                    {
+                        "name": "Estado de pago",
+                        "type": "text",
+                        "label": "Estado de pago"
+                    },
+                    {
+                        "name": "Numeración",
+                        "type": "text",
+                        "label": "Numeración",
+                        "multiline": true
+                    },
+                    {
+                        "name": "NIF",
+                        "type": "text",
+                        "label": "NIF"
+                    },
+                    {
+                        "name": "Nombre",
+                        "type": "text",
+                        "label": "Nombre"
+                    },
+                    {
+                        "name": "Correo",
+                        "type": "text",
+                        "label": "Correo"
+                    },
+                    {
+                        "name": "Dirección",
+                        "type": "text",
+                        "label": "Dirección"
+                    },
+                    {
+                        "name": "Población",
+                        "type": "text",
+                        "label": "Población"
+                    },
+                    {
+                        "name": "Código postal",
+                        "type": "text",
+                        "label": "Código postal"
+                    },
+                    {
+                        "name": "País",
+                        "type": "text",
+                        "label": "País"
+                    },
+                    {
+                        "name": "Teléfono",
+                        "type": "text",
+                        "label": "Teléfono"
+                    },
+                    {
+                        "name": "Número de cuenta",
+                        "type": "text",
+                        "label": "Número de cuenta"
+                    },
+                    {
+                        "name": "SWIFT/BIC",
+                        "type": "text",
+                        "label": "SWIFT/BIC",
+                        "multiline": true
+                    },
+                    {
+                        "name": "Código contable proveedor",
+                        "type": "text",
+                        "label": "Código contable proveedor"
+                    },
+                    {
+                        "name": "Concepto",
+                        "type": "text",
+                        "label": "Concepto"
+                    },
+                    {
+                        "name": "Base unitaria",
+                        "type": "number",
+                        "label": "Base unitaria"
+                    },
+                    {
+                        "name": "Cantidad",
+                        "type": "number",
+                        "label": "Cantidad"
+                    },
+                    {
+                        "name": "IVA (%)",
+                        "type": "number",
+                        "label": "IVA (%)"
+                    },
+                    {
+                        "name": "factura",
+                        "spec": [
+                            {
+                                "name": "id",
+                                "type": "text",
+                                "label": "ID"
+                            },
+                            {
+                                "name": "width",
+                                "type": "uinteger",
+                                "label": "Width"
+                            },
+                            {
+                                "name": "height",
+                                "type": "uinteger",
+                                "label": "Height"
+                            },
+                            {
+                                "name": "url",
+                                "type": "url",
+                                "label": "URL"
+                            },
+                            {
+                                "name": "filename",
+                                "type": "filename",
+                                "label": "File name"
+                            },
+                            {
+                                "name": "size",
+                                "type": "uinteger",
+                                "label": "Size"
+                            },
+                            {
+                                "name": "type",
+                                "type": "text",
+                                "label": "MIME type"
+                            },
+                            {
+                                "name": "thumbnails",
+                                "spec": [
+                                    {
+                                        "name": "small",
+                                        "spec": [
+                                            {
+                                                "name": "url",
+                                                "type": "url",
+                                                "label": "URL"
+                                            },
+                                            {
+                                                "name": "width",
+                                                "type": "uinteger",
+                                                "label": "Width"
+                                            },
+                                            {
+                                                "name": "height",
+                                                "type": "uinteger",
+                                                "label": "Height"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Small"
+                                    },
+                                    {
+                                        "name": "large",
+                                        "spec": [
+                                            {
+                                                "name": "url",
+                                                "type": "url",
+                                                "label": "URL"
+                                            },
+                                            {
+                                                "name": "width",
+                                                "type": "uinteger",
+                                                "label": "Width"
+                                            },
+                                            {
+                                                "name": "height",
+                                                "type": "uinteger",
+                                                "label": "Height"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Large"
+                                    },
+                                    {
+                                        "name": "full",
+                                        "spec": [
+                                            {
+                                                "name": "url",
+                                                "type": "url",
+                                                "label": "URL"
+                                            },
+                                            {
+                                                "name": "width",
+                                                "type": "uinteger",
+                                                "label": "Width"
+                                            },
+                                            {
+                                                "name": "height",
+                                                "type": "uinteger",
+                                                "label": "Height"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Full"
+                                    }
+                                ],
+                                "type": "collection",
+                                "label": "Thumbnails"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "factura"
+                    },
+                    {
+                        "name": "Recargo de equivalencia",
+                        "type": "number",
+                        "label": "Recargo de equivalencia"
+                    },
+                    {
+                        "name": "Retención (%)",
+                        "type": "number",
+                        "label": "Retención (%)"
+                    },
+                    {
+                        "name": "Número de cuenta 2",
+                        "type": "text",
+                        "label": "Número de cuenta 2"
+                    },
+                    {
+                        "name": "Sección",
+                        "type": "number",
+                        "label": "Sección"
+                    },
+                    {
+                        "name": "Epígrafe",
+                        "type": "number",
+                        "label": "Epígrafe"
+                    },
+                    {
+                        "name": "Tipo de documento fiscal",
+                        "type": "text",
+                        "label": "Tipo de documento fiscal"
+                    },
+                    {
+                        "name": "source",
+                        "type": "text",
+                        "label": "source"
+                    },
+                    {
+                        "name": "NumeraciónAgente",
+                        "type": "text",
+                        "label": "NumeraciónAgente"
+                    },
+                    {
+                        "name": "Copia de Fecha de emisión",
+                        "time": false,
+                        "type": "date",
+                        "label": "Copia de Fecha de emisión"
+                    },
+                    {
+                        "name": "Copia de Nombre",
+                        "spec": {
+                            "label": "Record ID"
+                        },
+                        "type": "array",
+                        "label": "Copia de Nombre"
+                    },
+                    {
+                        "name": "IVA (€)",
+                        "type": "number",
+                        "label": "IVA (€)"
+                    },
+                    {
+                        "name": "total",
+                        "type": "number",
+                        "label": "total"
+                    },
+                    {
+                        "name": "moneda",
+                        "type": "text",
+                        "label": "moneda"
+                    },
+                    {
+                        "name": "Seleccionar",
+                        "type": "text",
+                        "label": "Seleccionar"
+                    },
+                    {
+                        "name": "usdToEur",
+                        "type": "text",
+                        "label": "usdToEur"
+                    },
+                    {
+                        "name": "fechaCreacion",
+                        "type": "date",
+                        "label": "fechaCreacion"
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": [
+                [
+                    {
+                        "id": 6,
+                        "module": "google-email:sendAnEmail",
+                        "version": 4,
+                        "metadata": {
+                            "designer": {
+                                "x": 300,
+                                "y": 300,
+                                "messages": [
+                                    {
+                                        "category": "setup",
+                                        "severity": "error",
+                                        "message": "Value must not be empty."
+                                    },
+                                    {
+                                        "category": "link",
+                                        "severity": "warning",
+                                        "message": "The module is not connected to the data flow."
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            ]
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}
